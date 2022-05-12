@@ -1,0 +1,15 @@
+<div class="select7-container" data-controller="select7" data-select7-suggest-api-value="<%= suggest_path %>">
+    <div class="select7-selection">
+        <div class="select7-selected" data-select7-target="tagsContainer">
+            <% selected_tags&.each do |(id, tag)| %>
+                <%= render partial: "select7/item", locals: {id: id, name: name, tag: tag, selected: true} %>
+            <% end %>
+        </div>
+        <input data-select7-target="input" data-action="input->select7#suggest", class="select7-input">
+    </div>
+    <div data-select7-target="suggestionTags" class="hidden select7-suggestion">
+        <% option_tags&.each do |(id, tag)| %>
+            <%= render partial: "select7/item", locals: {id: id, name: name, tag: tag, selected: false} %>
+        <% end %>
+    </div>
+</div>

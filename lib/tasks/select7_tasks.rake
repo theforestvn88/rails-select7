@@ -4,6 +4,6 @@ end
 
 namespace :select7 do
     task :install do
-        run_select7_install_template "../select7/lib/install/stimulus.rb"
+        run_select7_install_template "../select7/lib/install/select7.rb"
     end
 end
