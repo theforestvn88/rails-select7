@@ -1,5 +1,4 @@
-<div id="<%= tag %>" class="hidden">
-    <input type="hidden" name="<%= name %>" value="<%= id %>" class="hidden" id="input-<%= tag %>">
+<div id="<%= tag %>" name="<%= name %>[]" value="<%= id %>" class="hidden">
     <p data-action="click->select7#selectTag" class="select7-option-item"><%= tag %></p>
     <span data-action="click->select7#removeTag" class="hidden select7-item-close">×</span>
 </div>
