@@ -1,0 +1,45 @@
+<div class="<%= css[:field_container] || 'select7-container' %>"
+    data-controller="select7" 
+    data-select7-suggest-api-value="<%= suggest_path %>" 
+    data-select7-name-value="<%= scope %><%= (multiple or nested_attributes) ? '[]' : '' %><%= "[#{field}]" %>"
+    data-select7-multiple-value="<%= multiple %>">
+
+    
+    <div data-select7-target="template" class="select7-hidden <%= css[:selected_item] || 'select7-selected-item' %>">
+        <span class="<%= css[:selected_item_close] || 'select7-item-close' %>" data-action="click->select7#removeTag">x</span>
+    </div>
+
+    <div class="<%= css[:selection] || 'select7-selection' %>">
+        <div data-select7-target="selected" class="<%= css[:selected_container] || 'select7-selected-container' %>">
+            <% if multiple %>
+                <% selected_items.each do |item| %>
+                    <div class="<%= css[:selected_item] || 'select7-selected-item' %>"
+                        <% if nested_attributes %>
+                            data-remove-id=<%= "#{scope}[#{item.id}][_destroy]" %> 
+                            data-remove-value="true"
+                        <% end %>
+                    >
+
+                    <% if nested_attributes %>
+                        <input type="hidden" name=<%= "#{scope}[#{item.id}][id]" %> value="<%= item.id %>">
+                        <input type="hidden" name=<%= "#{scope}[#{item.id}][#{field}]" %> value="<%= item.send(field) %>">
+                    <% else %>
+                        <input type="hidden" name=<%= "#{scope}[#{field}]" %> value="<%= item %>">
+                    <% end %>
+
+                        <span class="<%= css[:selected_item_content] || 'select7-selected-item-content' %>"><%= item.send(field) %></span>
+                        <span class="<%= css[:selected_item_close] || 'select7-item-close' %>" data-action="click->select7#removeTag">x</span>
+                    </div>
+                <% end %>
+            <% else %>
+                <span class="<%= css[:selected_item_content] || 'select7-selected-item-content' %>"><%= selected_items.first %></span>
+            <% end %>
+        </div>
+        <input data-select7-target="input" data-action="input->select7#suggest", class="<%= css[:input] || 'select7-input' %>">
+    </div>
+    <div data-select7-target="suggestion" class="select7-hidden <%= css[:suggestion] || 'select7-suggestion' %>">
+        <% option_items.each do |(id, content)| %>
+            <%= render partial: "select7/item", locals: {id: id, content: content} %>
+        <% end %>
+    </div>
+</div>
