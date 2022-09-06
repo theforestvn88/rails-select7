@@ -7,9 +7,10 @@ module Select7
       #{root}/app/helpers
     )
 
-    # initializer "select7.assets" do
-    #   if Rails.application.config.respond_to?(:assets)
-    #     Rails.application.config.assets.precompile += %w( select7.css )
+    # initializer "select7.assets.precompile" do |app|
+    #   if app.config.respond_to?(:assets)
+    #     app.config.assets.precompile << 'select7_controller.js'
+    #     app.config.assets.paths << 'select7_controller.js'
     #   end
     # end
 
