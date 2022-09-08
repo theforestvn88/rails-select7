@@ -67,6 +67,11 @@
     padding-bottom: 0.25rem;
 }
 
+.select7-option-item:hover {
+    background-color: rgb(229 231 235);
+    cursor: pointer;
+}
+
 .select7-selected-item {
     margin-right: 0.25rem;
     display: flex;
@@ -82,12 +87,18 @@
 .select7-item-close {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
+    margin-left: 0.25rem;
     text-align: center;
     font-size: 0.75rem;
     line-height: 1rem;
     border-left-width: 2px;
     --tw-border-opacity: 1;
     border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.select7-item-close:hover {
+    background-color: rgb(229 231 235);
+    cursor: pointer;
 }
 
 .select7-hidden {
