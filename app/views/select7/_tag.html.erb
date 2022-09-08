@@ -2,7 +2,8 @@
     data-controller="select7" 
     data-select7-suggest-api-value="<%= suggest_path %>"
     data-select7-name-value="<%= multiple ? '[]' : '' %><%= "[#{name}]" %>"
-    data-select7-multiple-value="<%= multiple %>">
+    data-select7-multiple-value="<%= multiple %>"
+    data-select7-items-value="<%= ActiveSupport::JSON.encode(option_tags) %>">
     
     <div data-select7-target="template" class="select7-selected-item select7-hidden">
         <span class="select7-item-close" data-action="click->select7#removeTag">x</span>
@@ -12,9 +13,5 @@
         <div class="select7-selected" data-select7-target="selected"></div>
         <input data-select7-target="input" data-action="input->select7#suggest" class="select7-input" autocomplete="off">
     </div>
-    <div data-select7-target="suggestion" class="select7-hidden select7-suggestion">
-        <% option_tags&.each do |(id, tag)| %>
-            <%= render partial: "select7/item", locals: {id: id, content: tag} %>
-        <% end %>
-    </div>
+    <div data-select7-target="suggestion" class="select7-hidden select7-suggestion"></div>
 </div>
