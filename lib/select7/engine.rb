@@ -7,12 +7,15 @@ module Select7
       #{root}/app/helpers
     )
 
-    # initializer "select7.assets.precompile" do |app|
-    #   if app.config.respond_to?(:assets)
-    #     app.config.assets.precompile << 'select7_controller.js'
-    #     app.config.assets.paths << 'select7_controller.js'
-    #   end
-    # end
+    initializer "select7.assets" do |app|
+      if app.config.respond_to?(:assets)
+        Rails.application.config.assets.precompile += %w( select7.js select7.css )
+      end
+    end
+
+    initializer "select7.importmap", after: "importmap" do |app|
+      app.config.importmap.paths << Engine.root.join("config/importmap.rb")
+    end
 
     initializer "select7.helpers", before: :load_config_initializers do
       ActiveSupport.on_load(:action_controller_base) do

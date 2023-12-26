@@ -21,6 +21,11 @@ Or install it yourself as:
 $ gem install select7
 ```
 
+Then run
+```bash
+$ ./bin/rails select7:install
+```
+
 ## Contributing
 Contribution directions go here.
 
