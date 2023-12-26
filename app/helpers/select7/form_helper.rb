@@ -1,15 +1,15 @@
 module Select7::FormHelper
     class ActionView::Helpers::FormBuilder
-        def select7(name, option_items = [], selected_items = [], suggest_path = nil, **attributes)
-            option_items.map! {|(id, name)| [id, name, name.downcase] }
+        def select7(field, option_items = [], selected_items: [], suggest: {}, **attributes)
+            option_items.map! {|(value, text)| [value, text, text.downcase] }
             attributes.reverse_merge!(css: {}, multiple: true)
-            
+
             @template.render partial: "select7/form_field", 
-                locals: { scope: @object_name, field: name,  selected_items: selected_items, option_items: option_items, suggest_path: suggest_path, **attributes }
+                locals: { scope: @object_name, field: field,  selected_items: selected_items, option_items: option_items, suggest: suggest || {}, **attributes }
         end
 
-        def select7_fields_for(record_name, field, option_items: [], selected_items: [], suggest_path: nil, **attributes)
-            option_items.map! {|(id, name)| [id, name, name.downcase] }
+        def select7_fields_for(record_name, field, option_items = [], selected_items: [], suggest: {}, **attributes)
+            option_items.map! {|(value, text)| [value, text, text.downcase] }
 
             nested_attributes = nested_attributes_association?(record_name)
             association =  nested_attributes ? "#{record_name}_attributes" : record_name
@@ -24,7 +24,7 @@ module Select7::FormHelper
                     nested_attributes: nested_attributes,
                     selected_items: selected_items,
                     option_items: option_items,
-                    suggest_path: suggest_path,
+                    suggest: suggest || {},
                     **attributes 
                 }
         end

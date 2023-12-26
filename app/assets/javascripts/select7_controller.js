@@ -2,7 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
     static targets = [ "selected", "input", "suggestion", "template" ]
-    static values = { suggestApi: String, name: String, multiple: Boolean, items: Array }
+    static values = { 
+        suggest: Object, 
+        name: String, 
+        multiple: Boolean, 
+        items: Array 
+    }
 
     connect() {
         this.count = 0
@@ -14,7 +19,7 @@ export default class extends Controller {
     }
 
     suggest() {
-        if (this.suggestApiValue && this.suggestApiValue != "") {
+        if (this.suggestValue["url"]) {
             this.remoteSuggest()
         } else if (this.hasItemsValue) {
             this.localSuggest()
@@ -25,15 +30,9 @@ export default class extends Controller {
         const key = this.inputTarget.value.toLowerCase()
         if (key != "") {
             this.suggestionTarget.innerHTML = ""
-            this.itemsValue.forEach(([id, name, lowcaseName]) => {
-                if (lowcaseName.includes(key)) {
-                    const optionItem = document.createElement("p")
-                    optionItem.setAttribute("value", id)
-                    optionItem.setAttribute("data-action", "click->select7#selectTag")
-                    optionItem.setAttribute("class", "select7-option-item")
-                    optionItem.innerText = name
-                    
-                    this.suggestionTarget.appendChild(optionItem)
+            this.itemsValue.forEach(([value, text, lowcaseText]) => {
+                if (lowcaseText.includes(key)) {
+                    this.insertSuggestItem(value, text)
                 }
             })
             this.suggestionTarget.classList.remove("select7-hidden")
@@ -48,18 +47,40 @@ export default class extends Controller {
         }
 
         this.timeoutId = setTimeout(() => {
-            let searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
-            let suggestQuery = this.suggestApiValue + `?key=${searchKey}`
-            fetch(suggestQuery)
-                .then((r) => r.text())
-                .then((html) => {
-                    if (html != "") {
-                        this.suggestionTarget.innerHTML = html
-                        this.suggestionTarget.classList.remove("select7-hidden")
+            const csrfToken = document.querySelector("[name='csrf-token']")?.content
+            const searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
+            const format = this.suggestValue["format"] == null ? "" : `.${this.suggestValue["format"]}`
+            const suggestQuery = this.suggestValue["url"] + format + `?key=${searchKey}`
+
+            fetch(suggestQuery, {
+                method: this.suggestValue["method"] || 'get',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': this.suggestValue["content-type"] || 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                }
+            })
+            .then((r) => r.text())
+            .then((result) => {
+                if (result) {
+                    this.suggestionTarget.innerHTML = ""
+
+                    if (this.suggestValue["format"] == "json") {
+                        const items = JSON.parse(result)
+                        items.forEach(item => {
+                            this.insertSuggestItem(item.value, item.text)
+                        })
                     } else {
-                        this.suggestionTarget.classList.add("select7-hidden")
+                        this.suggestionTarget.innerHTML = result
                     }
-                })
+
+                    this.suggestionTarget.classList.remove("select7-hidden")
+                } else {
+                    this.suggestionTarget.classList.add("select7-hidden")
+                }
+            })
         }, 200) // debounce 200
     }
 
@@ -107,5 +128,15 @@ export default class extends Controller {
 
     clearForm() {
         this.selectedTarget.innerHTML = ""
+    }
+
+    insertSuggestItem(value, text) {
+        const optionItem = document.createElement("div")
+        optionItem.setAttribute("value", value)
+        optionItem.setAttribute("data-action", "click->select7#selectTag")
+        optionItem.setAttribute("class", "select7-option-item")
+        optionItem.innerText = text
+        
+        this.suggestionTarget.appendChild(optionItem)
     }
 }

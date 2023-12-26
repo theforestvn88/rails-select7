@@ -1,10 +1,10 @@
 <div class="<%= css[:field_container] || 'select7-container' %>"
     data-controller="select7" 
-    data-select7-suggest-api-value="<%= suggest_path %>" 
+    data-select7-suggest-value="<%= ActiveSupport::JSON.encode(suggest) %>" 
     data-select7-name-value="<%= scope %><%= (multiple or nested_attributes) ? '[]' : '' %><%= "[#{field}]" %>"
     data-select7-multiple-value="<%= multiple %>"
-    data-select7-items-value="<%= ActiveSupport::JSON.encode(option_items) %>">>
-
+    data-select7-items-value="<%= ActiveSupport::JSON.encode(option_items) %>"
+>
     
     <div data-select7-target="template" class="select7-hidden <%= css[:selected_item] || 'select7-selected-item' %>">
         <span class="<%= css[:selected_item_close] || 'select7-item-close' %>" data-action="click->select7#removeTag">x</span>
