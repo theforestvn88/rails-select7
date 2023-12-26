@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import debounce from "@lodash/debounce"
 
 export default class extends Controller {
     static targets = [ "selected", "input", "suggestion", "template" ]
@@ -16,6 +17,12 @@ export default class extends Controller {
         if (this.hasInputTarget) {
             this.inputTarget.setAttribute("autocomplete", "off")
         }
+
+        this.debounceSuggest = debounce(
+            this.suggest.bind(this),
+            500,
+            { 'leading': true }
+        )
     }
 
     suggest() {
