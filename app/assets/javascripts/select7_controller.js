@@ -49,55 +49,51 @@ export default class extends Controller {
     }
 
     remoteSuggest() {
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId)
-        }
+        const csrfToken = document.querySelector("[name='csrf-token']")?.content
+        const searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
+        const format = this.suggestValue["format"] == null ? "" : `.${this.suggestValue["format"]}`
+        const suggestQuery = this.suggestValue["url"] + format + `?key=${searchKey}`
 
-        this.timeoutId = setTimeout(() => {
-            const csrfToken = document.querySelector("[name='csrf-token']")?.content
-            const searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
-            const format = this.suggestValue["format"] == null ? "" : `.${this.suggestValue["format"]}`
-            const suggestQuery = this.suggestValue["url"] + format + `?key=${searchKey}`
+        fetch(suggestQuery, {
+            method: this.suggestValue["method"] || 'get',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': this.suggestValue["content-type"] || 'application/json',
+                'X-CSRF-Token': csrfToken,
+            }
+        })
+        .then((r) => r.text())
+        .then((result) => {
+            if (result) {
+                this.suggestionTarget.innerHTML = ""
 
-            fetch(suggestQuery, {
-                method: this.suggestValue["method"] || 'get',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': this.suggestValue["content-type"] || 'application/json',
-                    'X-CSRF-Token': csrfToken,
-                }
-            })
-            .then((r) => r.text())
-            .then((result) => {
-                if (result) {
-                    this.suggestionTarget.innerHTML = ""
-
-                    if (this.suggestValue["format"] == "json") {
-                        const items = JSON.parse(result)
-                        items.forEach(item => {
-                            this.insertSuggestItem(item.value, item.text)
-                        })
-                    } else {
-                        this.suggestionTarget.innerHTML = result
-                    }
-
-                    this.suggestionTarget.classList.remove("select7-hidden")
+                if (this.suggestValue["format"] == "json") {
+                    const items = JSON.parse(result)
+                    items.forEach(item => {
+                        this.insertSuggestItem(item.value, item.text)
+                    })
                 } else {
-                    this.suggestionTarget.classList.add("select7-hidden")
+                    this.suggestionTarget.innerHTML = result
                 }
-            })
-        }, 200) // debounce 200
+
+                this.suggestionTarget.classList.remove("select7-hidden")
+            } else {
+                this.suggestionTarget.classList.add("select7-hidden")
+            }
+        })
     }
 
     selectTag(e) {
         const selectedView = e.target
+        const value = selectedView.getAttribute("value")
+        const name = this.nameValue.replace("[]", `[${this.count}]`)
 
         const input = document.createElement("input")
         input.setAttribute("type", "hidden")
-        input.setAttribute("value", selectedView.getAttribute("value"))
-        input.setAttribute("name", this.nameValue.replace("[]", `[${this.count}]`))
+        input.setAttribute("value", value)
+        input.setAttribute("name", name)
 
         const selectedItem = this.templateTarget.cloneNode(true)
         selectedItem.appendChild(input)
@@ -114,6 +110,8 @@ export default class extends Controller {
         this.suggestionTarget.classList.add("select7-hidden")
 
         this.count--
+
+        this.emitTagEvent("add", name, value)
     }
 
     removeTag(e) {
@@ -128,6 +126,9 @@ export default class extends Controller {
             this.selectedTarget.appendChild(input)
             removeView.querySelectorAll('input').forEach(v => this.selectedTarget.appendChild(v))
         }
+
+        const input = removeView.querySelector('input')
+        this.emitTagEvent("remove", input.getAttribute("name"), input.getAttribute("value"))
 
         this.selectedTarget.removeChild(removeView)
         this.inputTarget.classList.remove("select7-invisible")
@@ -145,5 +146,16 @@ export default class extends Controller {
         optionItem.innerText = text
         
         this.suggestionTarget.appendChild(optionItem)
+    }
+
+    emitTagEvent(action, name, value) {
+        const selectTagEvent = new CustomEvent("select7-tag", {
+            detail: {
+                action: action,
+                name: name,
+                value: value
+            }
+        })
+        window.dispatchEvent(selectTagEvent)
     }
 }
