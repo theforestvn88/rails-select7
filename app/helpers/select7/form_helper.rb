@@ -1,37 +1,48 @@
 module Select7::FormHelper
     class ActionView::Helpers::FormBuilder
-        def select7(field, option_items = [], selected_items: [], suggest: {}, **attributes)
-            option_items.map! {|(value, text)| [value, text, text.downcase] }
-            attributes.reverse_merge!(css: {}, multiple: true)
+        include Select7::TagHelper
 
-            unless scope = @object_name
-                scope = field
-                field = :value
+        def select7(field_hash, options_for_select: [], selected_items: [], suggest: {}, multiple: true, **attributes)
+            field, (value_attr, text_attr) = field_hash.first
+
+            if scope = @object_name
+                input_name = "#{scope}[#{field.to_s.singularize}_#{value_attr}#{multiple ? 's' : ''}]" + (multiple ? "[]" : "")
+            else
+                input_name = "#{field.to_s.singularize}_#{value_attr}" + (multiple ? "s[]" : "")
+            end
+            
+            if @object
+                selected_items = @object.send(field).map {|item| [item.send(value_attr), item.send(text_attr), item.send(text_attr).downcase] }
             end
 
-            @template.render partial: "select7/form_field", 
-                locals: { scope: scope, field: field, selected_items: selected_items, option_items: option_items, suggest: suggest || {}, **attributes }
+            select7_tag(
+                field, 
+                options_for_select, 
+                selected_items: selected_items, 
+                suggest: suggest, 
+                scope: @object_name, 
+                input_name: input_name,
+                **attributes
+            )
         end
 
-        def select7_fields_for(record_name, field, option_items = [], selected_items: [], suggest: {}, **attributes)
-            option_items.map! {|(value, text)| [value, text, text.downcase] }
+        # TODO: REMOVE IF NO USECASE
+        # def select7_fields_for(record_name, field = "id", option_items: [], selected_items: [], suggest: {}, **attributes)
+        #     nested_attributes = nested_attributes_association?(record_name)
+        #     association = nested_attributes ? "#{record_name}_attributes" : record_name
+        #     scope = "#{@object_name}[#{association}]"
+        #     input_name = "#{scope}[?][#{field}]"
 
-            nested_attributes = nested_attributes_association?(record_name)
-            association =  nested_attributes ? "#{record_name}_attributes" : record_name
-            scope = "#{@object_name}[#{association}]"
-
-            attributes.reverse_merge!(css: {}, multiple: true)
-
-            @template.render partial: "select7/form_field", 
-                locals: { 
-                    scope: scope,
-                    field: field,
-                    nested_attributes: nested_attributes,
-                    selected_items: selected_items,
-                    option_items: option_items,
-                    suggest: suggest || {},
-                    **attributes 
-                }
-        end
+        #     select7_tag(
+        #         field, 
+        #         option_items, 
+        #         selected_items: selected_items, 
+        #         suggest: suggest, 
+        #         scope: scope, 
+        #         input_name: input_name,
+        #         nested_attributes: nested_attributes,
+        #         **attributes
+        #     )
+        # end
     end
 end

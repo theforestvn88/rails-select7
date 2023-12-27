@@ -7,8 +7,9 @@ export default class extends Controller {
         scope: String,
         field: String,
         suggest: Object, 
-        name: String, 
+        inputName: String, 
         multiple: Boolean, 
+        nested: Boolean,
         items: Array,
         selectedItems: Array,
     }
@@ -103,7 +104,7 @@ export default class extends Controller {
     selectTag(e) {
         const selectedView = e.target
         const value = selectedView.getAttribute("value")
-        const name = this.nameValue.replace("[]", `[${this.count}]`)
+        const name = this.inputNameValue.replace("[?]", `[${this.count++}]`)
 
         const input = document.createElement("input")
         input.setAttribute("type", "hidden")
@@ -121,10 +122,7 @@ export default class extends Controller {
         if (!this.multipleValue) {
             this.inputTarget.classList.add("select7-invisible")
         }
-
         this.suggestionTarget.classList.add("select7-hidden")
-
-        this.count++
 
         this.emitChangedEvent("add", name, value)
     }
