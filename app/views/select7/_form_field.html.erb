@@ -1,9 +1,12 @@
 <div class="<%= css[:field_container] || 'select7-container' %>"
     data-controller="select7" 
+    data-select7-scope-value="<%= scope %>"
+    data-select7-field-value="<%= field %>"
     data-select7-suggest-value="<%= ActiveSupport::JSON.encode(suggest) %>" 
-    data-select7-name-value="<%= scope %><%= (multiple or nested_attributes) ? '[]' : '' %><%= "[#{field}]" %>"
+    data-select7-name-value="<%= scope || field %><%= (multiple or nested_attributes) ? '[]' : '' %><%= "[#{field}]" %>"
     data-select7-multiple-value="<%= multiple %>"
     data-select7-items-value="<%= ActiveSupport::JSON.encode(option_items) %>"
+    data-select7-selected-items-value="<%= ActiveSupport::JSON.encode(selected_items) %>"
 >
     
     <div data-select7-target="template" class="select7-hidden <%= css[:selected_item] || 'select7-selected-item' %>">

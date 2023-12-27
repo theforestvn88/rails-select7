@@ -4,10 +4,13 @@ import debounce from "@lodash/debounce"
 export default class extends Controller {
     static targets = [ "selected", "input", "suggestion", "template" ]
     static values = { 
+        scope: String,
+        field: String,
         suggest: Object, 
         name: String, 
         multiple: Boolean, 
-        items: Array 
+        items: Array,
+        selectedItems: Array,
     }
 
     connect() {
@@ -23,6 +26,8 @@ export default class extends Controller {
             500,
             { 'leading': true }
         )
+
+        this.selectedItems = [...this.selectedItemsValue]
     }
 
     suggest() {
@@ -85,6 +90,16 @@ export default class extends Controller {
         })
     }
 
+    insertSuggestItem(value, text) { // TODO: fix duplicate
+        const optionItem = document.createElement("div")
+        optionItem.setAttribute("value", value)
+        optionItem.setAttribute("data-action", "click->select7#selectTag")
+        optionItem.setAttribute("class", "select7-option-item")
+        optionItem.innerText = text
+        
+        this.suggestionTarget.appendChild(optionItem)
+    }
+
     selectTag(e) {
         const selectedView = e.target
         const value = selectedView.getAttribute("value")
@@ -109,9 +124,9 @@ export default class extends Controller {
 
         this.suggestionTarget.classList.add("select7-hidden")
 
-        this.count--
+        this.count++
 
-        this.emitTagEvent("add", name, value)
+        this.emitChangedEvent("add", name, value)
     }
 
     removeTag(e) {
@@ -128,7 +143,7 @@ export default class extends Controller {
         }
 
         const input = removeView.querySelector('input')
-        this.emitTagEvent("remove", input.getAttribute("name"), input.getAttribute("value"))
+        this.emitChangedEvent("remove", input.getAttribute("name"), input.getAttribute("value"))
 
         this.selectedTarget.removeChild(removeView)
         this.inputTarget.classList.remove("select7-invisible")
@@ -138,24 +153,20 @@ export default class extends Controller {
         this.selectedTarget.innerHTML = ""
     }
 
-    insertSuggestItem(value, text) {
-        const optionItem = document.createElement("div")
-        optionItem.setAttribute("value", value)
-        optionItem.setAttribute("data-action", "click->select7#selectTag")
-        optionItem.setAttribute("class", "select7-option-item")
-        optionItem.innerText = text
-        
-        this.suggestionTarget.appendChild(optionItem)
-    }
+    emitChangedEvent(action, name, value) {
+        if (action == "add") {
+            this.selectedItems.push([name, value])
+        } else if (action == "remove") {
+            this.selectedItems = this.selectedItems.filter((_name, _value) => _name == name && value == _value)
+        }
 
-    emitTagEvent(action, name, value) {
-        const selectTagEvent = new CustomEvent("select7-tag", {
+        const changedEvent = new CustomEvent('select7-changed', {
             detail: {
-                action: action,
-                name: name,
-                value: value
+                scope: this.scopeValue,
+                field: this.fieldValue,
+                values: this.selectedItems.map(item => item[1])
             }
         })
-        window.dispatchEvent(selectTagEvent)
+        window.dispatchEvent(changedEvent)
     }
 }

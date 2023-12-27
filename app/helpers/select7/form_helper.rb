@@ -4,8 +4,13 @@ module Select7::FormHelper
             option_items.map! {|(value, text)| [value, text, text.downcase] }
             attributes.reverse_merge!(css: {}, multiple: true)
 
+            unless scope = @object_name
+                scope = field
+                field = :value
+            end
+
             @template.render partial: "select7/form_field", 
-                locals: { scope: @object_name, field: field,  selected_items: selected_items, option_items: option_items, suggest: suggest || {}, **attributes }
+                locals: { scope: scope, field: field, selected_items: selected_items, option_items: option_items, suggest: suggest || {}, **attributes }
         end
 
         def select7_fields_for(record_name, field, option_items = [], selected_items: [], suggest: {}, **attributes)
