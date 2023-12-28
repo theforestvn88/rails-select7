@@ -23,4 +23,12 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "rails", ">= 7.0"
+  spec.add_dependency 'importmap-rails'
+  spec.add_dependency 'stimulus-rails'
+
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'minitest'
+  spec.add_development_dependency 'capybara', ">= 3.26"
+  spec.add_development_dependency 'selenium-webdriver', "4.8.0"
+  spec.add_development_dependency 'webdrivers', ">= 5.0.0"
 end
