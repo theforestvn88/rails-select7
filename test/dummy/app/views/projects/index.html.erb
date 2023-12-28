@@ -1,0 +1,19 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Projects</h1>
+
+<%= form_with(url: search_projects_path, method: :get) do |f| %>
+  <%= f.select7({:tags => [:id, :name]}, options_for_select: Tag.all.map {|t| [t.id, t.name]}) %>
+<% end %>
+
+
+<div id="projects">
+  <% @projects.each do |project| %>
+    <%= render project %>
+    <p>
+      <%= link_to "Show this project", project %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New project", new_project_path %>

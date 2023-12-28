@@ -18,30 +18,6 @@ end
 require 'capybara/rails'
 require 'capybara/minitest'
 
-# Capybara.register_driver :headless_chrome do |app|
-#     options = Selenium::WebDriver::Chrome::Options.new
-#     options.add_argument('--headless')
-  
-#     Capybara::Selenium::Driver.new(
-#       app,
-#       browser: :chrome,
-#       options: options
-#     )
-#   end
-  
-#   Capybara.register_driver :chrome do |app|
-#     options = Selenium::WebDriver::Chrome::Options.new
-  
-#     Capybara::Selenium::Driver.new(
-#       app,
-#       browser: :chrome,
-#       options: options
-#     )
-#   end
-  
-#   Capybara.default_driver = :chrome
-
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-#   driven_by :selenium, using: :firefox
-    driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
+    driven_by :selenium, using: :firefox
 end

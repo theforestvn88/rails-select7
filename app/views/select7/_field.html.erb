@@ -40,7 +40,7 @@
                 <span class="<%= css[:selected_item_content] || 'select7-selected-item-content' %>"><%= selected_items.first %></span>
             <% end %>
         </div>
-        <input data-select7-target="input" data-action="input->select7#debounceSuggest" class="<%= css[:input] || 'select7-input' %>" autocomplete="off">
+        <input data-select7-target="input" data-action="input->select7#debounceSuggest" class="<%= css[:input] || 'select7-input' %>" autocomplete="off" placeholder="search by <%= field %>">
     </div>
     <div data-select7-target="suggestion" class="select7-hidden <%= css[:suggestion] || 'select7-suggestion' %>">
     </div>
