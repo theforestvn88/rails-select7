@@ -18,7 +18,6 @@ module Select7::TagHelper
         render partial: "select7/item", locals: {id: id, content: content || yield.html_safe }
     end
 
-
     # TODO: ADD SEARCH BOX
     # form_with(search_url)
     #    f.select7(...)

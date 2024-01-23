@@ -7,6 +7,8 @@ class ProjectsController < ApplicationController
   end
 
   def search
+    @projects = Project.joins(:tags).where(tags: { id: params[:tag_ids] })
+    render :index
   end
   
   # GET /projects/1

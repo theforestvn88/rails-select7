@@ -3,7 +3,8 @@
 <h1>Projects</h1>
 
 <%= form_with(url: search_projects_path, method: :get) do |f| %>
-  <%= f.select7({:tags => [:id, :name]}, options_for_select: Tag.all.map {|t| [t.id, t.name]}) %>
+  <%= f.select7({:tags => [:id, :name]}, option_items: Tag.all) %>
+  <%= f.submit %>
 <% end %>
 
 
