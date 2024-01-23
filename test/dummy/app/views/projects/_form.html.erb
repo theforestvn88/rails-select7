@@ -16,6 +16,8 @@
     <%= form.text_field :title %>
   </div>
 
+  <%= form.select7({:tags => [:id, :name]}, options_for_select: Tag.all.map { |tag| [tag.id, tag.name]}) %>
+
   <div>
     <%= form.submit %>
   </div>

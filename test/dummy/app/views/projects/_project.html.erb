@@ -4,4 +4,10 @@
     <%= project.title %>
   </p>
 
+  <div>
+  <% project.tags.each do |tag|%>
+    <span><%= tag.name %></span>
+  <% end %>
+  </div>
+
 </div>

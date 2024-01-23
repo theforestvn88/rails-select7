@@ -1,7 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: Ruby on Rails
+  id: 1
+  name: Ruby
 
 two:
+  id: 2
+  name: Ruby on Rails
+
+three:
+  id: 3
   name: Javascript
+

@@ -28,7 +28,7 @@ export default class extends Controller {
             { 'leading': true }
         )
 
-        this.selectedItems = [...this.selectedItemsValue]
+        this.selectedItems = this.hasSelectedItemsValue ? this.selectedItemsValue.map((v, n, x) => [v, n]) : []
     }
 
     suggest() {
@@ -91,7 +91,7 @@ export default class extends Controller {
         })
     }
 
-    insertSuggestItem(value, text) { // TODO: fix duplicate
+    insertSuggestItem(value, text) {
         const optionItem = document.createElement("div")
         optionItem.setAttribute("value", value)
         optionItem.setAttribute("data-action", "click->select7#selectTag")
@@ -106,16 +106,22 @@ export default class extends Controller {
         const value = selectedView.getAttribute("value")
         const name = this.inputNameValue.replace("[?]", `[${this.count++}]`)
 
-        const input = document.createElement("input")
-        input.setAttribute("type", "hidden")
-        input.setAttribute("value", value)
-        input.setAttribute("name", name)
+        if (!this.selectedItems.find(item => item[0] == value)) {
+            this.selectedItems.push([value, name])
 
-        const selectedItem = this.templateTarget.cloneNode(true)
-        selectedItem.appendChild(input)
-        selectedItem.insertAdjacentHTML("afterbegin", selectedView.innerHTML)
-        selectedItem.classList.remove("select7-hidden")
-        this.selectedTarget.appendChild(selectedItem)
+            const input = document.createElement("input")
+            input.setAttribute("type", "hidden")
+            input.setAttribute("value", value)
+            input.setAttribute("name", name)
+
+            const selectedItem = this.templateTarget.cloneNode(true)
+            selectedItem.appendChild(input)
+            selectedItem.insertAdjacentHTML("afterbegin", selectedView.innerHTML)
+            selectedItem.classList.remove("select7-hidden")
+            this.selectedTarget.appendChild(selectedItem)
+
+            this.emitChangedEvent("add", name, value)
+        }
         
         this.inputTarget.value = ""
 
@@ -123,25 +129,27 @@ export default class extends Controller {
             this.inputTarget.classList.add("select7-invisible")
         }
         this.suggestionTarget.classList.add("select7-hidden")
-
-        this.emitChangedEvent("add", name, value)
     }
 
     removeTag(e) {
         const removeView = e.target.parentElement
+        const name = removeView.getAttribute("data-remove-id")
+        const value = removeView.getAttribute("data-remove-value")
+
+        this.selectedItems = this.selectedItems.filter((_value, _name) => _name == name && value == _value)
 
         if (removeView.hasAttribute("data-remove-id")) {
             const input = document.createElement("input")
             input.setAttribute("type", "hidden")
-            input.setAttribute("name", removeView.getAttribute("data-remove-id"))
-            input.setAttribute("value", removeView.getAttribute("data-remove-value"))
+            input.setAttribute("name", name)
+            input.setAttribute("value", value)
 
             this.selectedTarget.appendChild(input)
             removeView.querySelectorAll('input').forEach(v => this.selectedTarget.appendChild(v))
         }
 
         const input = removeView.querySelector('input')
-        this.emitChangedEvent("remove", input.getAttribute("name"), input.getAttribute("value"))
+        this.emitChangedEvent("remove", name, value)
 
         this.selectedTarget.removeChild(removeView)
         this.inputTarget.classList.remove("select7-invisible")
@@ -152,17 +160,13 @@ export default class extends Controller {
     }
 
     emitChangedEvent(action, name, value) {
-        if (action == "add") {
-            this.selectedItems.push([name, value])
-        } else if (action == "remove") {
-            this.selectedItems = this.selectedItems.filter((_name, _value) => _name == name && value == _value)
-        }
-
         const changedEvent = new CustomEvent('select7-changed', {
             detail: {
                 scope: this.scopeValue,
                 field: this.fieldValue,
-                values: this.selectedItems.map(item => item[1])
+                action: action,
+                change_value: value,
+                values: this.selectedItems.map(item => item[0])
             }
         })
         window.dispatchEvent(changedEvent)
