@@ -23,13 +23,12 @@ module Select7::FormHelper
             options_for_select = attributes[:options_for_select] || options.map { |item| [item.send(value_attr), item.send(text_attr)] }
 
             select7_tag(
-                field, 
-                options_for_select, 
-                selected_items: selecteds, 
+                **attributes,
+                options_for_select: options_for_select, 
+                selecteds: selecteds, 
                 suggest: suggest, 
                 scope: @object_name, 
                 input_name: input_name,
-                **attributes
             )
         end
 

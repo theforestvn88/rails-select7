@@ -6,12 +6,20 @@ export default class extends Controller {
     static values = { 
         scope: String,
         field: String,
+        valueAttr: String,
+        textAttr: String,
         suggest: Object, 
         inputName: String, 
         multiple: Boolean, 
         nested: Boolean,
         items: Array,
         selectedItems: Array,
+    }
+
+    static formats = {
+        "json": "application/json",
+        "html": "text/html",
+        "turbo_stream": "text/vnd.turbo-stream.html"
     }
 
     connect() {
@@ -57,8 +65,9 @@ export default class extends Controller {
     remoteSuggest() {
         const csrfToken = document.querySelector("[name='csrf-token']")?.content
         const searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
-        const format = this.suggestValue["format"] == null ? "" : `.${this.suggestValue["format"]}`
-        const suggestQuery = this.suggestValue["url"] + format + `?key=${searchKey}`
+        const format = this.suggestValue["format"] || "html"
+        const suggestQuery = this.suggestValue["url"] + `?${this.textAttrValue}=${searchKey}`
+        const contentType = this.constructor.formats[format]
 
         fetch(suggestQuery, {
             method: this.suggestValue["method"] || 'get',
@@ -66,7 +75,7 @@ export default class extends Controller {
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
-                'Content-Type': this.suggestValue["content-type"] || 'application/json',
+                'Content-Type': this.suggestValue["content-type"] || contentType,
                 'X-CSRF-Token': csrfToken,
             }
         })
@@ -78,7 +87,7 @@ export default class extends Controller {
                 if (this.suggestValue["format"] == "json") {
                     const items = JSON.parse(result)
                     items.forEach(item => {
-                        this.insertSuggestItem(item.value, item.text)
+                        this.insertSuggestItem(item[this.valueAttrValue], item[this.textAttrValue])
                     })
                 } else {
                     this.suggestionTarget.innerHTML = result

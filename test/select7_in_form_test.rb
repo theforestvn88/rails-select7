@@ -1,17 +1,18 @@
 require "test_helper"
 
 class Select7InFormTest < ApplicationSystemTestCase
-    test "create project with select7 tags" do
+    test "create project with local select7 tags" do
         visit("/projects")
         click_link "New project"
         
-        find("input[data-select7-target='input']").set "Ruby"
+        select7_tag, select7_dev = all("input[data-select7-target='input']").to_a
+        select7_tag.set "Ruby"
         find("div[class='select7-option-item']", exact_text: "Ruby").click
 
-        find("input[data-select7-target='input']").set "Ruby"
+        select7_tag.set "Ruby"
         find("div[class='select7-option-item']", exact_text: "Ruby on Rails").click
 
-        find("input[data-select7-target='input']").set "Javascript"
+        select7_tag.set "Javascript"
         find("div[class='select7-option-item']", exact_text: "Javascript").click
         all("span[data-action='click->select7#removeTag']").last.click
 
@@ -32,12 +33,12 @@ class Select7InFormTest < ApplicationSystemTestCase
         click_link("#{project.title}", match: :first)
         click_link("Edit this project")
         
-        # all("span[data-action='click->select7#removeTag']").map(&:click)
+        select7_tag, select7_dev = all("input[data-select7-target='input']").to_a
 
-        find("input[data-select7-target='input']").set "Javascript"
+        select7_tag.set "Javascript"
         find("div[class='select7-option-item']", exact_text: "Javascript").click
 
-        find("input[data-select7-target='input']").set "Ruby"
+        select7_tag.set "Ruby"
         find("div[class='select7-option-item']", exact_text: "Ruby").click
 
         find("input[type='submit']").click
@@ -56,13 +57,30 @@ class Select7InFormTest < ApplicationSystemTestCase
         visit("/projects")
         click_link "New project"
         
-        find("input[data-select7-target='input']").set "Ruby"
+        select7_tag, select7_dev = all("input[data-select7-target='input']").to_a
+
+        select7_tag.set "Ruby"
         find("div[class='select7-option-item']", exact_text: "Ruby").click
 
-        find("input[data-select7-target='input']").set "Ruby"
+        select7_tag.set "Ruby"
         find("div[class='select7-option-item']", exact_text: "Ruby").click
 
         find("input[type='submit']").click
         assert_equal ["Ruby"], Project.last.tags.map(&:name)
+    end
+
+    test "create project with remote select7 developers" do
+        visit("/projects")
+        click_link "New project"
+        
+        select7_tag, select7_dev = all("input[data-select7-target='input']").to_a
+        select7_dev.set "dev1"
+
+        find("div[class='select7-option-item']", exact_text: "dev1", wait: 5).click
+
+        find("input[type='submit']").click
+
+
+        assert_equal ["dev1"], Project.last.developers.map(&:name)
     end
 end

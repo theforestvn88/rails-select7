@@ -18,6 +18,8 @@
 
   <%= form.select7(:tags => [:id, :name], options: Tag.all) %>
 
+  <%= form.select7(:developers => [:id, :name], suggest: { url: search_developers_path, format: :json}) %>
+
   <div>
     <%= form.submit %>
   </div>
