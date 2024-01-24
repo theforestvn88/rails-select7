@@ -2,8 +2,8 @@ module Select7::FormHelper
     class ActionView::Helpers::FormBuilder
         include Select7::TagHelper
 
-        def select7(field_hash, option_items: [], selected_items: [], suggest: {}, multiple: true, params: @template.params, **attributes)
-            field, (value_attr, text_attr) = field_hash.first
+        def select7(options: [], selecteds: [], suggest: {}, multiple: true, params: @template.params, **attributes)
+            field, (value_attr, text_attr) = attributes.first
 
             input_name = if scope = @object_name then
                 "#{scope}[#{field.to_s.singularize}_#{value_attr}#{multiple ? 's' : ''}]" + (multiple ? "[]" : "")
@@ -11,21 +11,21 @@ module Select7::FormHelper
                 "#{field.to_s.singularize}_#{value_attr}" + (multiple ? "s[]" : "")
             end
            
-            if @object
-                selected_items = @object.send(field)
+            selecteds = (if @object then
+                @object.send(field)
             else
                 clazz = field.to_s.classify.constantize
-                selected_items = Array(clazz.where(value_attr.to_sym => params["#{field.to_s.singularize}_#{value_attr}s"]).all)
-            end
+                Array(clazz.where(value_attr.to_sym => params["#{field.to_s.singularize}_#{value_attr}s"]).all)
+            end).map { |item| 
+                [item.send(value_attr), item.send(text_attr)]
+            }
 
-            selected_items = selected_items.map {|item| [item.send(value_attr), item.send(text_attr)] }
-
-            options_for_select = option_items.map { |item| [item.send(value_attr), item.send(text_attr)] }
+            options_for_select = attributes[:options_for_select] || options.map { |item| [item.send(value_attr), item.send(text_attr)] }
 
             select7_tag(
                 field, 
                 options_for_select, 
-                selected_items: selected_items, 
+                selected_items: selecteds, 
                 suggest: suggest, 
                 scope: @object_name, 
                 input_name: input_name,

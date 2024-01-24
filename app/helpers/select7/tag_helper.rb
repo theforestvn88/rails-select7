@@ -1,6 +1,6 @@
 module Select7::TagHelper
-    def select7_tag(name, option_items = [], selected_items: [], suggest: {}, **attributes)
-        option_items.map! {|(value, text)| [value, text, text.downcase] }
+    def select7_tag(name, options = [], selected_items: [], suggest: {}, **attributes)
+        options.map! {|(value, text)| [value, text, text.downcase] }
         attributes.reverse_merge!(css: {}, multiple: true, nested_attributes: nil)
         attributes[:input_name] ||= "#{name}" + (attributes[:multiple] ? "[]" : "")
 
@@ -8,7 +8,7 @@ module Select7::TagHelper
             locals: { 
                 field: name,
                 selected_items: selected_items, 
-                option_items: option_items, 
+                option_items: options, 
                 suggest: suggest || {}, 
                 **attributes 
             }
