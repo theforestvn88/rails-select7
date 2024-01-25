@@ -63,7 +63,7 @@ class Select7InFormTest < ApplicationSystemTestCase
         find("div[class='select7-option-item']", exact_text: "Ruby").click
 
         select7_tag.set "Ruby"
-        find("div[class='select7-option-item']", exact_text: "Ruby").click
+        find("div[class='select7-option-item']", exact_text: "✓ Ruby").click
 
         find("input[type='submit']").click
         assert_equal ["Ruby"], Project.last.tags.map(&:name)

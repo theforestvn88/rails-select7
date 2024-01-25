@@ -51,12 +51,11 @@ export default class extends Controller {
         const key = this.inputTarget.value.toLowerCase()
         if (key != "") {
             this.suggestionTarget.innerHTML = ""
-            this.itemsValue.forEach(([value, text, lowcaseText]) => {
-                if (lowcaseText.includes(key)) {
-                    this.insertSuggestItem(value, text)
-                }
-            })
-            this.suggestionTarget.classList.remove("select7-hidden")
+            const matchedItems = this.itemsValue.filter(([value, text, lowcaseText]) => lowcaseText.includes(key))
+            if (matchedItems.length > 0) {
+                matchedItems.forEach(([value, text, x]) => this.insertSuggestItem(value, text))
+                this.suggestionTarget.classList.remove("select7-hidden")
+            }
         } else {
             this.suggestionTarget.classList.add("select7-hidden")
         }
@@ -86,14 +85,16 @@ export default class extends Controller {
 
                 if (this.suggestValue["format"] == "json") {
                     const items = JSON.parse(result)
-                    items.forEach(item => {
-                        this.insertSuggestItem(item[this.valueAttrValue], item[this.textAttrValue])
-                    })
+                    if (items.length > 0) {
+                        items.forEach(item => {
+                            this.insertSuggestItem(item[this.valueAttrValue], item[this.textAttrValue])
+                        })
+                        this.suggestionTarget.classList.remove("select7-hidden")
+                    }
                 } else {
                     this.suggestionTarget.innerHTML = result
+                    this.suggestionTarget.classList.remove("select7-hidden")
                 }
-
-                this.suggestionTarget.classList.remove("select7-hidden")
             } else {
                 this.suggestionTarget.classList.add("select7-hidden")
             }
@@ -101,11 +102,12 @@ export default class extends Controller {
     }
 
     insertSuggestItem(value, text) {
+        const displayText = this.selectedItems.find(item => item[0] == value) ? `✓ ${text}` : text
         const optionItem = document.createElement("div")
         optionItem.setAttribute("value", value)
         optionItem.setAttribute("data-action", "click->select7#selectTag")
         optionItem.setAttribute("class", "select7-option-item")
-        optionItem.innerText = text
+        optionItem.innerText = displayText
         
         this.suggestionTarget.appendChild(optionItem)
     }
@@ -138,6 +140,8 @@ export default class extends Controller {
             this.inputTarget.classList.add("select7-invisible")
         }
         this.suggestionTarget.classList.add("select7-hidden")
+
+        this.inputTarget.focus()
     }
 
     removeTag(e) {
