@@ -37,6 +37,12 @@ export default class extends Controller {
         )
 
         this.selectedItems = this.hasSelectedItemsValue ? this.selectedItemsValue.map((v, n, x) => [v, n]) : []
+
+        document.addEventListener('click', this.outsideClick.bind(this))
+    }
+
+    disconnect() {
+        document.removeEventListener('click', this.outsideClick.bind(this))
     }
 
     suggest() {
@@ -54,10 +60,10 @@ export default class extends Controller {
             const matchedItems = this.itemsValue.filter(([value, text, lowcaseText]) => lowcaseText.includes(key))
             if (matchedItems.length > 0) {
                 matchedItems.forEach(([value, text, x]) => this.insertSuggestItem(value, text))
-                this.suggestionTarget.classList.remove("select7-hidden")
+                this.showSuggestion()
             }
         } else {
-            this.suggestionTarget.classList.add("select7-hidden")
+            this.hideSuggestion()
         }
     }
 
@@ -89,14 +95,14 @@ export default class extends Controller {
                         items.forEach(item => {
                             this.insertSuggestItem(item[this.valueAttrValue], item[this.textAttrValue])
                         })
-                        this.suggestionTarget.classList.remove("select7-hidden")
+                        this.showSuggestion()
                     }
                 } else {
                     this.suggestionTarget.innerHTML = result
-                    this.suggestionTarget.classList.remove("select7-hidden")
+                    this.showSuggestion()
                 }
             } else {
-                this.suggestionTarget.classList.add("select7-hidden")
+                this.hideSuggestion()
             }
         })
     }
@@ -134,13 +140,12 @@ export default class extends Controller {
             this.emitChangedEvent("add", name, value)
         }
         
-        this.inputTarget.value = ""
+        this.hideSuggestion()
 
+        this.inputTarget.value = ""
         if (!this.multipleValue) {
             this.inputTarget.classList.add("select7-invisible")
         }
-        this.suggestionTarget.classList.add("select7-hidden")
-
         this.inputTarget.focus()
     }
 
@@ -168,6 +173,15 @@ export default class extends Controller {
         this.inputTarget.classList.remove("select7-invisible")
     }
 
+    showSuggestion() {
+        this.suggestionTarget.classList.remove("select7-hidden")
+        this.suggestionTarget.scrollTo(0, 0)
+    }
+
+    hideSuggestion() {
+        this.suggestionTarget.classList.add("select7-hidden")
+    }
+
     clearForm() {
         this.selectedTarget.innerHTML = ""
     }
@@ -183,5 +197,17 @@ export default class extends Controller {
             }
         })
         window.dispatchEvent(changedEvent)
+    }
+
+    handleKeyUp(event) {
+        if (event.code == "Escape") {
+            this.hideSuggestion()
+        }
+    }
+
+    outsideClick(event) {
+        if (!event.composedPath().includes(this.element)) {
+            this.hideSuggestion()
+        }
     }
 }

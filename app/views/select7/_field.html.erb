@@ -1,5 +1,6 @@
 <div class="<%= css[:field_container] || 'select7-container' %>"
-    data-controller="select7" 
+    data-controller="select7"
+    data-action="keyup@document->select7#handleKeyUp" 
     data-select7-scope-value="<%= scope %>"
     data-select7-field-value="<%= field %>"
     data-select7-value-attr-value="<%= value_attr %>"
