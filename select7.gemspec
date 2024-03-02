@@ -6,9 +6,9 @@ Gem::Specification.new do |spec|
   spec.authors     = ["Lam Phan"]
   spec.email       = ["theforestvn88@gmail.com"]
   spec.homepage    = "https://github.com/theforestvn88/rails-select7.git"
-  spec.summary     = "selector (similar to select2, but no jquery, only use stimulus.js) for rails"
-  spec.description = "selector (similar to select2, but no jquery, only use stimulus.js) for rails"
-    spec.license     = "MIT"
+  spec.summary     = "Multiple choices selector (similar to select2, but with rails hotwire)"
+  spec.description = "Multiple choices selector (similar to select2, but with rails hotwire)"
+  spec.license     = "MIT"
   
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
