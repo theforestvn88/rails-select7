@@ -7,6 +7,7 @@ Multiple choices selector (similar to select2, but with rails hotwire)
 ```ruby
 # Gemfile
 gem "rails", ">=7.0.0" # require Rails 7+
+gem "stimulus-rails"   # require stimulus
 gem "select7"
 
 # install
@@ -50,16 +51,23 @@ In case there're a very large number of choices, instead of query all choices as
 <%= form_with(model: project) do |form| %>
     # ...
     # assigned devs
-    <%= form.select7(:developers => [:id, :name], suggest: { url: search_developers_path, format: :json}) %>
+    <%= form.select7(:developers => [:id, :name], suggest: { url: search_developers_url(page_size: 10), format: :json }) %>
     # ...
 <% end %>
 
 # this require an implementation of the suggestion
+resources :developers do
+    get :search, on: :collection
+end
+
 class DevelopersController < ApplicationController
     # ...
-    # search_developers_path
+    # suggest developers
     def search
-        render json: Developer.where("name like ?", "%#{params[:name]}%")
+        @developers = Developer.where("name like ?", "%#{params[:name]}%").first(params[:page_size].to_i)
+        respond_to do |format|
+            format.json { render json: @developers, layout: false }
+        end
     end
     # ...
 end

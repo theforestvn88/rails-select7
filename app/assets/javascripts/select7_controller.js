@@ -68,19 +68,24 @@ export default class extends Controller {
     }
 
     remoteSuggest() {
-        const csrfToken = document.querySelector("[name='csrf-token']")?.content
         const searchKey = this.inputTarget.value.replaceAll(/[^\w]/g, '')
-        const format = this.suggestValue["format"] || "html"
-        const suggestQuery = this.suggestValue["url"] + `?${this.textAttrValue}=${searchKey}`
-        const contentType = this.constructor.formats[format]
+        if (searchKey.length <= 0)
+            return
 
-        fetch(suggestQuery, {
+        const csrfToken = document.querySelector("[name='csrf-token']")?.content
+        const format = this.suggestValue["format"] || "html"
+        const contentType = this.suggestValue["content-type"] || this.constructor.formats[format]
+        const suggestQueryUrl = new URL(this.suggestValue["url"])
+        suggestQueryUrl.searchParams.append(this.textAttrValue, searchKey)
+
+        fetch(suggestQueryUrl, {
             method: this.suggestValue["method"] || 'get',
             mode: 'cors',
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
-                'Content-Type': this.suggestValue["content-type"] || contentType,
+                'Accept': contentType,
+                'Content-Type': contentType,
                 'X-CSRF-Token': csrfToken,
             }
         })
@@ -88,7 +93,6 @@ export default class extends Controller {
         .then((result) => {
             if (result) {
                 this.suggestionTarget.innerHTML = ""
-
                 if (this.suggestValue["format"] == "json") {
                     const items = JSON.parse(result)
                     if (items.length > 0) {
