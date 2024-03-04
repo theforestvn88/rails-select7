@@ -20,15 +20,4 @@ module Select7::TagHelper
     def select7_item_tag(id, content = nil)
         render partial: "select7/item", locals: {id: id, content: content || yield.html_safe }
     end
-
-    # TODO: ADD SEARCH BOX
-    # form_with(search_url)
-    #    f.select7(...)
-
-
-    # TODO: ADD FILTER BOX
-    # div stimulus-controller action=select7-changed->call filter submit
-    #  form_with(filter_url)
-    #    f.select7(...)
-    # /div
 end

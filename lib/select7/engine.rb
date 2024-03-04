@@ -9,13 +9,13 @@ module Select7
 
     initializer "select7.assets" do |app|
       if app.config.respond_to?(:assets)
-        Rails.application.config.assets.precompile += %w( select7.js select7.css )
+        Rails.application.config.assets.precompile += %w( select7.js select7.esm.js select7.css )
       end
     end
 
-    initializer "select7.importmap", after: "importmap" do |app|
-      app.config.importmap.paths << Engine.root.join("config/importmap.rb")
-    end
+    # initializer "select7.importmap", after: "importmap" do |app|
+    #   app.config.importmap.paths << Engine.root.join("config/importmap.rb")
+    # end
 
     initializer "select7.helpers", before: :load_config_initializers do
       ActiveSupport.on_load(:action_controller_base) do

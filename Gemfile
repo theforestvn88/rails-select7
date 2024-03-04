@@ -16,6 +16,6 @@ gem "puma"
 gem "sqlite3"
 
 gem "importmap-rails", "~> 1.2"
-
 gem "stimulus-rails", "~> 1.3"
+gem "turbo-rails"
 

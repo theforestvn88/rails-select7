@@ -1,8 +1,7 @@
 PATH
   remote: .
   specs:
-    select7 (0.1.0)
-      importmap-rails
+    select7 (0.0.1)
       rails (>= 7.0)
       stimulus-rails
 
@@ -181,6 +180,10 @@ GEM
     strscan (3.0.1)
     thor (1.2.1)
     timeout (0.2.0)
+    turbo-rails (2.0.4)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     webdrivers (5.3.1)
@@ -210,6 +213,7 @@ DEPENDENCIES
   sprockets-rails
   sqlite3
   stimulus-rails (~> 1.3)
+  turbo-rails
   webdrivers (>= 5.0.0)
 
 BUNDLED WITH
