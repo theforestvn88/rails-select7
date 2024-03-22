@@ -7,3 +7,6 @@
 /test/dummy/log/
 /test/dummy/db/*.sqlite3
 *.gem
+
+/node_modules
+yarn.lock
