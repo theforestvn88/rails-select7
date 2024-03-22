@@ -2,7 +2,6 @@ module Select7
   class Engine < ::Rails::Engine
     isolate_namespace Select7
 
-    config.eager_load_namespaces << Select7
     config.autoload_once_paths = %W(
       #{root}/app/helpers
     )
@@ -12,10 +11,6 @@ module Select7
         Rails.application.config.assets.precompile += %w( select7.js select7.esm.js select7.css )
       end
     end
-
-    # initializer "select7.importmap", after: "importmap" do |app|
-    #   app.config.importmap.paths << Engine.root.join("config/importmap.rb")
-    # end
 
     initializer "select7.helpers", before: :load_config_initializers do
       ActiveSupport.on_load(:action_controller_base) do
