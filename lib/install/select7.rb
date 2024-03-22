@@ -36,7 +36,7 @@ end
 say "Import Select7 Css"
 if APPLICATION_LAYOUT_PATH.exist?
   insert_into_file APPLICATION_LAYOUT_PATH.to_s, <<~ERB.indent(4), before: /^\s*<%= stylesheet_link_tag/
-    <%= stylesheet_link_tag "select7", "select7", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "select7", "data-turbo-track": "reload" %>
   ERB
 else
   say %(Couldn't Import Select7 Css), :red
