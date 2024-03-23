@@ -8,7 +8,7 @@ module Select7
 
     initializer "select7.assets" do |app|
       if app.config.respond_to?(:assets)
-        Rails.application.config.assets.precompile += %w( select7.min.js select7.esm.min.js select7.css )
+        Rails.application.config.assets.precompile += %w( select7.min.js select7.esm.min.js select7.min.css )
       end
     end
 
