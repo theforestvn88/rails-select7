@@ -14,7 +14,8 @@ elsif Rails.root.join("package.json").exist?
     run "yarn add lodash.debounce"
     
     insert_into_file APPLICATION_LAYOUT_PATH.to_s, <<~ERB.indent(4), before: /\s*<\/head/
-      \n<%= javascript_include_tag "select7.min.js", "data-turbo-track": "reload", rel: :preload, async: true %>
+      \n<%= preload_link_tag "select7.min.js", as: "script" %>
+      <%= javascript_include_tag "select7.min.js", "data-turbo-track": "reload" %>
     ERB
 
     append_to_file Rails.root.join("app/javascript/controllers/index.js"), <<~ERB
@@ -36,7 +37,7 @@ end
 say "Import Select7 Css"
 if APPLICATION_LAYOUT_PATH.exist?
   insert_into_file APPLICATION_LAYOUT_PATH.to_s, <<~ERB.indent(4), before: /^\s*<%= stylesheet_link_tag/
-    <%= stylesheet_link_tag "select7", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "select7.min", "data-turbo-track": "reload" %>
   ERB
 else
   say %(Couldn't Import Select7 Css), :red
