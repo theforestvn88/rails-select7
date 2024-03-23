@@ -72,3 +72,24 @@ class DevelopersController < ApplicationController
     # ...
 end
 ```
+
+### Listening select7 changed events
+In case you want to do something with selected options from select7 whenever they're changed, you could listen event `select7-changed@window` from your js file.
+For example:
+```ruby
+<div data-controller="filter" data-action="select7-changed@window->filter#update">
+    <%= select7_tag(:tags => [:id, :name], options: Tag.all) %>
+</div>
+
+# filter_controller.js
+import { Controller } from "@hotwired/stimulus"
+export default class extends Controller {
+    update(e) {
+        console.log(e.detail)
+        // field: "tags"
+        // action: "add"
+        // changedValue: "3"
+        // selectedValues: ["1", "3"]
+    }
+}
+```

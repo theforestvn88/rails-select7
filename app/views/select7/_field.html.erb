@@ -1,7 +1,8 @@
+<% _scope = local_assigns.has_key?(:scope) ? scope : '' %>
 <div class="<%= css[:field_container] || 'select7-container' %>"
     data-controller="select7"
     data-action="keyup@document->select7#handleKeyUp" 
-    data-select7-scope-value="<%= scope %>"
+    data-select7-scope-value="<%= _scope %>"
     data-select7-field-value="<%= field %>"
     data-select7-value-attr-value="<%= value_attr %>"
     data-select7-text-attr-value="<%= text_attr %>"
@@ -23,14 +24,14 @@
                 <% selected_items.each do |id, text, _| %>
                     <div class="<%= css[:selected_item] || 'select7-selected-item' %>"
                         <% if nested_attributes %>
-                            data-remove-id=<%= "#{scope}[#{id}][_destroy]" %> 
+                            data-remove-id=<%= "#{_scope}[#{id}][_destroy]" %> 
                             data-remove-value="true"
                         <% end %>
                     >
 
                     <% if nested_attributes %>
-                        <input type="hidden" name=<%= "#{scope}[#{item.id}][id]" %> value="<%= id %>">
-                        <input type="hidden" name=<%= "#{scope}[#{item.id}][#{field}]" %> value="<%= id %>">
+                        <input type="hidden" name=<%= "#{_scope}[#{item.id}][id]" %> value="<%= id %>">
+                        <input type="hidden" name=<%= "#{_scope}[#{item.id}][#{field}]" %> value="<%= id %>">
                     <% else %>
                         <input type="hidden" name="<%= input_name %>" value="<%= id %>">
                     <% end %>

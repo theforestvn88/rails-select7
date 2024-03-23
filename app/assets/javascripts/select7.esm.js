@@ -194,8 +194,8 @@ export const Select7Controller = (base, debounce) =>
                     scope: this.scopeValue,
                     field: this.fieldValue,
                     action: action,
-                    change_value: value,
-                    values: this.selectedItems.map(item => item[0])
+                    changedValue: value,
+                    selectedValues: this.selectedItems.map(item => item[0])
                 }
             })
             window.dispatchEvent(changedEvent)

@@ -5,6 +5,6 @@
     "esbuild": "^0.20.2"
   },
   "scripts": {
-    "build": "esbuild app/assets/javascripts/select7.js --minify --format=cjs --outdir=app/assets/builds && esbuild app/assets/javascripts/select7.esm.js --bundle --minify --format=esm --outdir=app/assets/builds"
+    "build": "esbuild app/assets/javascripts/select7.js --minify --format=cjs --outdir=app/assets/builds && esbuild app/assets/javascripts/select7.esm.js --minify --format=esm --outdir=app/assets/builds"
   }
 }

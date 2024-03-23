@@ -20,35 +20,14 @@ module Select7::FormHelper
                 [item.send(value_attr), item.send(text_attr)]
             }
 
-            options_for_select = attributes[:options_for_select] || options.map { |item| [item.send(value_attr), item.send(text_attr)] }
-
             select7_tag(
                 **attributes,
-                options_for_select: options_for_select, 
+                options: options, 
                 selecteds: selecteds, 
                 suggest: suggest, 
                 scope: @object_name, 
                 input_name: input_name,
             )
         end
-
-        # TODO: REMOVE IF NO USECASE
-        # def select7_fields_for(record_name, field = "id", option_items: [], selected_items: [], suggest: {}, **attributes)
-        #     nested_attributes = nested_attributes_association?(record_name)
-        #     association = nested_attributes ? "#{record_name}_attributes" : record_name
-        #     scope = "#{@object_name}[#{association}]"
-        #     input_name = "#{scope}[?][#{field}]"
-
-        #     select7_tag(
-        #         field, 
-        #         option_items, 
-        #         selected_items: selected_items, 
-        #         suggest: suggest, 
-        #         scope: scope, 
-        #         input_name: input_name,
-        #         nested_attributes: nested_attributes,
-        #         **attributes
-        #     )
-        # end
     end
 end
